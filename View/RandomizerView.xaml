@@ -7,8 +7,16 @@
         mc:Ignorable="d"
         Title="RandomizerView" Height="450" Width="800">
     <StackPanel>
-        <TextBox Height="200" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"></TextBox>
-        <Button Content="Randomize" Command="{Binding GetRandom}"></Button>
-        <TextBox Height="200" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Inserts, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <TextBox Height="200" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}" />
+        <Label Content="Count" />
+        <TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="Count_PreviewTextInput" />
+
+        <Label Content="Percentage of null" />
+        <TextBox Text="{Binding NullPercentage, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Button Content="Randomize" Command="{Binding GetRandom}" />
+        <ScrollViewer>
+            <TextBox Height="200" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Inserts, UpdateSourceTrigger=PropertyChanged}" />
+        </ScrollViewer>
     </StackPanel>
 </Window>

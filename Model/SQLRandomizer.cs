@@ -14,7 +14,7 @@ namespace SQLRandomizer.Model
         {
         }
 
-        public string GetValues(string sqlQuery, int count)
+        public string GetValues(string sqlQuery, int count, double nullPercentage)
         {
             if (count <= 0)
             {
@@ -30,7 +30,7 @@ namespace SQLRandomizer.Model
             {
                 for (int j = 0; j < count; j++)
                 {
-                    sb.Append(GetTableInsert(tables[i]) + "\n");
+                    sb.Append(GetTableInsert(tables[i], nullPercentage) + "\n");
                 }
             }
 
@@ -43,7 +43,7 @@ namespace SQLRandomizer.Model
             return sqlQuery.Split("create table", StringSplitOptions.RemoveEmptyEntries);
         }
 
-        private string GetTableInsert(string sqlQuery)
+        private string GetTableInsert(string sqlQuery, double nullPercentage)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -62,7 +62,7 @@ namespace SQLRandomizer.Model
 
             foreach (var tuple in columns)
             {
-                sb.Append((GetColumnValue(tuple.Key, tuple.Value, 0) ?? "null") + ",");
+                sb.Append((GetColumnValue(tuple.Key, tuple.Value, nullPercentage) ?? "null") + ",");
             }
 
             sb.Remove(sb.Length - 1, 1);
@@ -102,11 +102,29 @@ namespace SQLRandomizer.Model
 
             if (columnType.Contains("char"))
             {
-                str = $"\'{GetRandomStringColumn(columnName, columnType, nullPercentage)}\'";
+                string? res = GetRandomStringColumn(columnName, columnType, nullPercentage);
+
+                if (res != null) 
+                {
+                    str = $"\'{res}\'";
+                }
+                else
+                {
+                    str = "null";
+                }
             }
             else
             {
-                str = $"{GetRandomNumberColumn(columnName, columnType, nullPercentage)}";
+                double? res = GetRandomNumberColumn(columnName, columnType, nullPercentage);
+
+                if (res != null)
+                {
+                    str = $"{res}";
+                }
+                else
+                {
+                    str = "null";
+                }
             }
 
             return str;

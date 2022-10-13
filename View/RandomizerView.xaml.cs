@@ -25,5 +25,14 @@ namespace SQLRandomizer.View
             InitializeComponent();
             this.DataContext = new RandomizerViewModel();
         }
+
+        private void Count_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if(e.Text.Any(ch => !Char.IsDigit(ch)))
+            {
+                e.Handled = true;
+            }
+        }
+
     }
 }

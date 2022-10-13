@@ -11,10 +11,32 @@ namespace SQLRandomizer.ViewModel
 {
     internal class RandomizerViewModel : INotifyPropertyChanged
     {
-        private Model.SQLRandomizer randomizer = new Model.SQLRandomizer();
-        private string query;
+        private int count = 1;
+        public int Count
+        {
+            get => count;
+            set
+            {
+                count = value;
+                OnPropertyChanged(nameof(Count));
+            }
+        }
 
-        public string Query
+        private double nullPercentage = 0.0;
+        public double NullPercentage
+        {
+            get => nullPercentage;
+            set
+            {
+                nullPercentage = value;
+                OnPropertyChanged(nameof(NullPercentage));
+            }
+        }
+
+        private Model.SQLRandomizer randomizer = new Model.SQLRandomizer();
+        private string? query;
+
+        public string? Query
         {
             get => query;
             set
@@ -24,9 +46,9 @@ namespace SQLRandomizer.ViewModel
             }
         }
 
-        private string inserts;
+        private string? inserts;
 
-        public string Inserts
+        public string? Inserts
         {
             get => inserts;
             set
@@ -44,10 +66,15 @@ namespace SQLRandomizer.ViewModel
 
         private void GetRandomized()
         {
-            if(this.Query != null)
+            if(this.Query != null && checkPercentage())
             {
-                Inserts = randomizer.GetValues(this.Query, 10);
+                Inserts = randomizer.GetValues(this.Query, Count, NullPercentage);
             }
+        }
+
+        private bool checkPercentage()
+        {
+            return NullPercentage >= 0 && NullPercentage <= 1;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
