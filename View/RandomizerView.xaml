@@ -7,7 +7,11 @@
         mc:Ignorable="d"
         Title="RandomizerView" Height="450" Width="800">
     <StackPanel>
-        <TextBox Height="200" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}" />
+        <TextBox Name="query" Height="200" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}" />
+        <Button Name="btnOpenFile" Click="btnOpenFile_Click" Content="Open file" />
+
+
+
         <Label Content="Count" />
         <TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="Count_PreviewTextInput" />
 
@@ -16,7 +20,8 @@
 
         <Button Content="Randomize" Command="{Binding GetRandom}" />
         <ScrollViewer>
-            <TextBox Height="200" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Inserts, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Name="inserts" Height="200" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Inserts, UpdateSourceTrigger=PropertyChanged}" />
         </ScrollViewer>
+        <Button Name="btnSaveFile" Click="btnSaveFile_Click" Content="Save file" />
     </StackPanel>
 </Window>

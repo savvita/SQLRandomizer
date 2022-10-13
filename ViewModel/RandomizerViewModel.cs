@@ -64,7 +64,7 @@ namespace SQLRandomizer.ViewModel
             get => getRandom ?? new RelayCommand(() => { GetRandomized(); });
         }
 
-        private void GetRandomized()
+        private async void GetRandomized()
         {
             if(this.Query != null && checkPercentage())
             {

@@ -23,10 +23,10 @@ namespace SQLRandomizer.Model
             Regex reg = new Regex(@"\s+");
             sqlQuery = reg.Replace(sqlQuery.ToLower(), " ");
 
-            string[] tables = GetTableQueries(sqlQuery);
+            var tables = GetTableQueries(sqlQuery);
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < tables.Length; i++)
+            for (int i = 0; i < tables.Count; i++)
             {
                 for (int j = 0; j < count; j++)
                 {
@@ -38,9 +38,20 @@ namespace SQLRandomizer.Model
         }
 
 
-        private string[] GetTableQueries(string sqlQuery)
+        private List<string> GetTableQueries(string sqlQuery)
         {
-            return sqlQuery.Split("create table", StringSplitOptions.RemoveEmptyEntries);
+            var instructions = sqlQuery.Split(";", StringSplitOptions.RemoveEmptyEntries);
+            List<string> tables = new List<string>();
+
+            foreach(var inst in instructions)
+            {
+                if(inst.Trim().StartsWith("create table"))
+                {
+                    tables.Add(inst.Replace("create table", ""));
+                }
+            }
+
+            return tables;
         }
 
         private string GetTableInsert(string sqlQuery, double nullPercentage)
@@ -90,7 +101,12 @@ namespace SQLRandomizer.Model
                     continue;
                 }
                 string[] cols = columns2[i].Trim().Split(' ');
-                columns.Add(cols[0], cols[1]);
+                columns2[i] = columns2[i].Trim();
+                int idx = columns2[i].IndexOf(' ');
+                string name = columns2[i].Substring(0, idx);
+                string type = columns2[i].Substring(idx + 1);
+
+                columns.Add(name, type);
             }
 
             return columns;
@@ -149,7 +165,12 @@ namespace SQLRandomizer.Model
         {
             string? str = string.Empty;
             int startIdx = columnType.IndexOf("(");
-            int.TryParse(columnType.Substring(startIdx + 1, columnType.LastIndexOf(")") - startIdx - 1), out int length);
+            int length = 1;
+
+            if (startIdx != -1)
+            {
+                int.TryParse(columnType.Substring(startIdx + 1, columnType.LastIndexOf(")") - startIdx - 1), out length);
+            }
 
             if (columnName.Contains("name"))
             {

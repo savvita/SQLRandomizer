@@ -40,7 +40,7 @@ namespace SQLRandomizer.Model
             return fitStrings[random.Next(fitStrings.Count)];
         }
 
-        private static void GetRandomUsersValues()
+        public static void GetRandomUsersValues()
         {
             string url = "https://randomuser.me/api/?results=1000";
             using (WebClient wc = new WebClient())
