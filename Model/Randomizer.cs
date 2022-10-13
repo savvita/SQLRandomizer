@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SQLRandomizer.Model
@@ -14,6 +17,11 @@ namespace SQLRandomizer.Model
         private static List<string> cities = new List<string>() { "Kyiv", "Dnipro", "Toronto" };
         private static List<string> streets = new List<string>() { "prosp. Yavornitskogo", "prosp. Polya", "Main Street" };
         private static Random random = new Random();
+
+        static Randomizer()
+        {
+            GetRandomUsersValues();
+        }
 
         private static string? GetRandomString(List<string> strings, int maxLength, double nullPercentage)
         {
@@ -30,6 +38,28 @@ namespace SQLRandomizer.Model
             }
 
             return fitStrings[random.Next(fitStrings.Count)];
+        }
+
+        private static void GetRandomUsersValues()
+        {
+            string url = "https://randomuser.me/api/?results=1000";
+            using (WebClient wc = new WebClient())
+            {
+                var json = wc.DownloadString(url);
+
+                if(json != null)
+                {
+                    var users = JsonSerializer.Deserialize<Users>(json);
+                    foreach (var user in users.results)
+                    {
+                        firstNames.Add(user.name.first);
+                        lastNames.Add(user.name.last);
+                        countries.Add(user.location.country);
+                        cities.Add(user.location.city);
+                    }
+                }
+            }
+
         }
 
         private static IEnumerable<IEnumerable<T>> CartesianProduct<T>(IEnumerable<IEnumerable<T>> sequences)
