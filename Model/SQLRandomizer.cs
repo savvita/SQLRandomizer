@@ -14,27 +14,32 @@ namespace SQLRandomizer.Model
         {
         }
 
-        public string GetValues(string sqlQuery, int count, double nullPercentage)
+        public async Task<string> GetValues(string sqlQuery, int count, double nullPercentage)
         {
-            if (count <= 0)
+            string res = await Task.Run(() =>
             {
-                return "";
-            }
-            Regex reg = new Regex(@"\s+");
-            sqlQuery = reg.Replace(sqlQuery.ToLower(), " ");
-
-            var tables = GetTableQueries(sqlQuery);
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < tables.Count; i++)
-            {
-                for (int j = 0; j < count; j++)
+                if (count <= 0)
                 {
-                    sb.Append(GetTableInsert(tables[i], nullPercentage) + "\n");
+                    return "";
                 }
-            }
+                Regex reg = new Regex(@"\s+");
+                sqlQuery = reg.Replace(sqlQuery.ToLower(), " ");
 
-            return sb.ToString();
+                var tables = GetTableQueries(sqlQuery);
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < tables.Count; i++)
+                {
+                    for (int j = 0; j < count; j++)
+                    {
+                        sb.Append(GetTableInsert(tables[i], nullPercentage) + "\n");
+                    }
+                }
+                return sb.ToString();
+            });
+
+            return res;
+
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using SQLRandomizer.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +12,10 @@ namespace SQLRandomizer.ViewModel
 {
     internal class RandomizerViewModel : INotifyPropertyChanged
     {
+        public RandomizerViewModel()
+        {
+            Task.Factory.StartNew(Randomizer.GetRandomUsersValues);
+        }
         private int count = 1;
         public int Count
         {
@@ -68,7 +73,12 @@ namespace SQLRandomizer.ViewModel
         {
             if(this.Query != null && checkPercentage())
             {
-                Inserts = randomizer.GetValues(this.Query, Count, NullPercentage);
+                //Task<string> sumTask = new Task<string>(() => randomizer.GetValues(this.Query, Count, NullPercentage));
+                //sumTask.Start();
+
+                //Inserts = sumTask.Result;
+                Inserts = await randomizer.GetValues(this.Query, Count, NullPercentage);
+                //Inserts = randomizer.GetValues(this.Query, Count, NullPercentage);
             }
         }
 
