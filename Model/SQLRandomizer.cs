@@ -9,13 +9,15 @@ namespace SQLRandomizer.Model
 {
     internal class SQLRandomizer
     {
-
+        public event Action Loading;
+        public event Action Loaded;
         public SQLRandomizer()
         {
         }
 
         public async Task<string> GetValues(string sqlQuery, int count, double nullPercentage)
         {
+            Loading?.Invoke();
             string res = await Task.Run(() =>
             {
                 if (count <= 0)
@@ -37,6 +39,8 @@ namespace SQLRandomizer.Model
                 }
                 return sb.ToString();
             });
+
+            Loaded?.Invoke();
 
             return res;
 
@@ -97,7 +101,7 @@ namespace SQLRandomizer.Model
         {
             Dictionary<string, string> columns = new Dictionary<string, string>();
             int startIdx = sqlQuery.IndexOf('(');
-            string[] columns2 = sqlQuery.Substring(startIdx + 1, sqlQuery.LastIndexOf(')') - startIdx).Trim().Split(',', StringSplitOptions.RemoveEmptyEntries);
+            string[] columns2 = sqlQuery.Substring(startIdx + 1, sqlQuery.LastIndexOf(')') - startIdx - 1).Trim().Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             for (int i = 0; i < columns2.Length; i++)
             {
@@ -208,6 +212,31 @@ namespace SQLRandomizer.Model
             else if (columnName.Contains("street"))
             {
                 str = Randomizer.GetRandomStreet(length, nullPercentage);
+            }
+
+            else if (columnName.Contains("login"))
+            {
+                str = Randomizer.GetRandomLogin(length, nullPercentage);
+            }
+
+            else if (columnName.Contains("password"))
+            {
+                str = Randomizer.GetRandomPassword(length, nullPercentage);
+            }
+
+            else if (columnName.Contains("email"))
+            {
+                str = Randomizer.GetRandomEmail(length, nullPercentage);
+            }
+
+            else if (columnName.Contains("phone"))
+            {
+                str = Randomizer.GetRandomPhone(length, nullPercentage);
+            }
+
+            else if (columnName.Contains("cell"))
+            {
+                str = Randomizer.GetRandomCell(length, nullPercentage);
             }
 
             else

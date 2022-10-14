@@ -22,10 +22,24 @@ namespace SQLRandomizer.View
     /// </summary>
     public partial class RandomizerView : Window
     {
+        RandomizerViewModel randomizer = new RandomizerViewModel();
         public RandomizerView()
         {
             InitializeComponent();
-            this.DataContext = new RandomizerViewModel();
+            this.DataContext = randomizer;
+
+            randomizer.Loading += ShowLoading;
+            randomizer.Loaded += HideLoading;
+        }
+
+        private void HideLoading()
+        {
+            this.Loading.Visibility = Visibility.Hidden;
+        }
+
+        private void ShowLoading()
+        {
+            this.Loading.Visibility = Visibility.Visible;
         }
 
         private void Count_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -55,5 +69,6 @@ namespace SQLRandomizer.View
                 File.WriteAllText(saveFileDialog.FileName, inserts.Text);
             }
         }
+
     }
 }

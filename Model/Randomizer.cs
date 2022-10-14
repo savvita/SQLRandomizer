@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace SQLRandomizer.Model
 {
@@ -16,12 +14,13 @@ namespace SQLRandomizer.Model
         private static List<string> countries = new List<string>() { "Ukraine", "Poland", "Canada" };
         private static List<string> cities = new List<string>() { "Kyiv", "Dnipro", "Toronto" };
         private static List<string> streets = new List<string>() { "prosp. Yavornitskogo", "prosp. Polya", "Main Street" };
-        private static Random random = new Random();
+        private static List<string> emails = new List<string>() { "username@gmail.com" };
+        private static List<string> logins = new List<string>() { "username", "user" };
+        private static List<string> passwords = new List<string>() { "qwerty", "11111", "q1w2e3r4" };
+        private static List<string> phones = new List<string>() { "056-999-99-99" };
+        private static List<string> cells = new List<string>() { "097-999-99-99" };
 
-        static Randomizer()
-        {
-            //GetRandomUsersValues();
-        }
+        private static Random random = new Random();
 
         private static string? GetRandomString(List<string> strings, int maxLength, double nullPercentage)
         {
@@ -40,7 +39,7 @@ namespace SQLRandomizer.Model
             return fitStrings[random.Next(fitStrings.Count)];
         }
 
-        public static async void GetRandomUsersValues()
+        public static void GetRandomUsersValues()
         {
             string url = "https://randomuser.me/api/?results=1000";
             using (WebClient wc = new WebClient())
@@ -50,12 +49,64 @@ namespace SQLRandomizer.Model
                 if(json != null)
                 {
                     var users = JsonSerializer.Deserialize<Users>(json);
+
+                    if(users == null || users.results == null)
+                    {
+                        return;
+                    }
+
                     foreach (var user in users.results)
                     {
-                        firstNames.Add(user.name.first);
-                        lastNames.Add(user.name.last);
-                        countries.Add(user.location.country);
-                        cities.Add(user.location.city);
+                        if (user.name != null)
+                        {
+                            if(user.name.first != null)
+                            {
+                                firstNames.Add(user.name.first);
+                            }
+                            if(user.name.last != null)
+                            {
+                                lastNames.Add(user.name.last);
+                            }
+                        }
+
+                        if(user.location != null)
+                        {
+                            if (user.location.country != null)
+                            {
+                                countries.Add(user.location.country); 
+                            }
+                            if (user.location.city != null)
+                            {
+                                cities.Add(user.location.city); 
+                            }
+                        }
+
+                        if (user.email != null)
+                        {
+                            emails.Add(user.email); 
+                        }
+
+                        if (user.phone != null)
+                        {
+                            phones.Add(user.phone);
+                        }
+
+                        if (user.cell != null)
+                        {
+                            cells.Add(user.cell);
+                        }
+
+                        if (user.login != null)
+                        {
+                            if (user.login.username != null)
+                            {
+                                logins.Add(user.login.username);  
+                            }
+                            if (user.login.password != null)
+                            {
+                                passwords.Add(user.login.password); 
+                            }
+                        }
                     }
                 }
             }
@@ -126,6 +177,31 @@ namespace SQLRandomizer.Model
         public static string? GetRandomStreet(int maxLength, double nullPercentage = 0)
         {
             return GetRandomString(streets, maxLength, nullPercentage);
+        }
+
+        public static string? GetRandomLogin(int maxLength, double nullPercentage = 0)
+        {
+            return GetRandomString(logins, maxLength, nullPercentage);
+        }
+
+        public static string? GetRandomPassword(int maxLength, double nullPercentage = 0)
+        {
+            return GetRandomString(passwords, maxLength, nullPercentage);
+        }
+
+        public static string? GetRandomEmail(int maxLength, double nullPercentage = 0)
+        {
+            return GetRandomString(emails, maxLength, nullPercentage);
+        }
+
+        public static string? GetRandomPhone(int maxLength, double nullPercentage = 0)
+        {
+            return GetRandomString(phones, maxLength, nullPercentage);
+        }
+
+        public static string? GetRandomCell(int maxLength, double nullPercentage = 0)
+        {
+            return GetRandomString(cells, maxLength, nullPercentage);
         }
 
         public static string? GetRandomString(int maxLength, double nullPercentage = 0)

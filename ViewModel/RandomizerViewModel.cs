@@ -1,11 +1,8 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using SQLRandomizer.Model;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SQLRandomizer.ViewModel
@@ -15,8 +12,11 @@ namespace SQLRandomizer.ViewModel
         public RandomizerViewModel()
         {
             Task.Factory.StartNew(Randomizer.GetRandomUsersValues);
+            randomizer.Loading += () => Loading?.Invoke();
+            randomizer.Loaded += () => Loaded?.Invoke();
         }
-        private int count = 1;
+
+        private int count = 10;
         public int Count
         {
             get => count;
@@ -73,12 +73,8 @@ namespace SQLRandomizer.ViewModel
         {
             if(this.Query != null && checkPercentage())
             {
-                //Task<string> sumTask = new Task<string>(() => randomizer.GetValues(this.Query, Count, NullPercentage));
-                //sumTask.Start();
-
-                //Inserts = sumTask.Result;
+                Inserts = "";
                 Inserts = await randomizer.GetValues(this.Query, Count, NullPercentage);
-                //Inserts = randomizer.GetValues(this.Query, Count, NullPercentage);
             }
         }
 
@@ -88,10 +84,13 @@ namespace SQLRandomizer.ViewModel
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event Action Loading;
+        public event Action Loaded;
 
         private void OnPropertyChanged([CallerMemberName] string name = "")
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
     }
 }
